@@ -1,0 +1,19 @@
+{
+  "postagens": [
+    {
+      "id": 1,
+      "titulo": "Cachorro perdido no bairro",
+      "conteudo": "Alguém viu um golden retriever solto na Rua das Flores?",
+      "autor": "Amarildo",
+      "curtidas": 0
+    }
+  ],
+  "comentarios": [
+    {
+      "id": 1,
+      "postagemId": 1,
+      "autor": "Vizinha da esquina",
+      "texto": "Vi sim! Ele estava perto da padaria."
+    }
+  ]
+}

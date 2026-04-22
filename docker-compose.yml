@@ -1,0 +1,76 @@
+# "services" é a chave raiz que declara todos os containers do projeto
+services:
+
+  # Primeiro serviço: o JSON Server — equivalente ao Node.js + MySQL juntos, mas simulado
+  json-server:
+
+    # "image" diz ao Docker qual imagem baixar do Docker Hub para criar esse container
+    # vimagick/json-server é uma imagem pública que já vem com o JSON Server instalado
+    image: vimagick/json-server
+
+    # "volumes" monta arquivos do seu computador dentro do container
+    # ./bd.json é o arquivo na sua máquina — /data/db.json é onde o container vai enxergá-lo
+    # sem isso, o container não teria acesso ao seu banco de dados simulado
+    volumes:
+      - ./bd.json:/data/db.json
+
+    # "command" é o comando executado quando o container sobe
+    # --watch faz o JSON Server recarregar automaticamente quando o bd.json mudar
+    # --host 0.0.0.0 permite que outros containers na rede interna se conectem a ele
+    # --port 3000 define a porta que o JSON Server vai escutar dentro do container
+    command: json-server --watch /data/db.json --host 0.0.0.0 --port 3000
+
+    # "restart: unless-stopped" reinicia o container automaticamente se ele cair
+    # a única exceção é se você parar manualmente com docker-compose stop
+    restart: unless-stopped
+
+    # "networks" conecta esse container à rede interna do projeto
+    # só containers na mesma rede se enxergam — o JSON Server fica invisível para fora
+    networks:
+      - rede-postaae
+
+  # Segundo serviço: o Nginx — porta de entrada única do projeto
+  nginx:
+
+    # nginx:alpine é a versão leve do Nginx — mesma usada em produção no comentaae
+    # alpine é uma distribuição Linux minimalista que reduz o tamanho da imagem
+    image: nginx:alpine
+
+    # "ports" expõe a porta do container para o seu computador
+    # "80:80" significa: porta 80 do host → porta 80 do container
+    # é por isso que você acessa http://localhost sem precisar digitar nenhuma porta
+    ports:
+      - "80:80"
+
+    volumes:
+      # monta a pasta frontend/ do seu computador dentro do Nginx
+      # /usr/share/nginx/html é o diretório padrão onde o Nginx serve arquivos estáticos
+      - ./frontend:/usr/share/nginx/html
+
+      # monta o nginx.conf do seu computador substituindo a configuração padrão do Nginx
+      # /etc/nginx/conf.d/default.conf é o arquivo de configuração ativo do Nginx
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+
+    # "depends_on" define ordem de inicialização entre containers
+    # o Nginx só sobe depois que o json-server estiver de pé
+    # evita o Nginx tentar fazer proxy para um container que ainda não existe
+    depends_on:
+      - json-server
+
+    # mesma política de reinicialização automática do json-server
+    restart: unless-stopped
+
+    # conecta o Nginx na mesma rede interna do json-server
+    # é essa rede que permite o Nginx falar com o json-server pelo nome "json-server:3000"
+    networks:
+      - rede-postaae
+
+# "networks" declara as redes internas do projeto
+networks:
+
+  # nome da rede interna — os containers se enxergam pelo nome do serviço como hostname
+  rede-postaae:
+
+    # "bridge" é o driver padrão do Docker para redes locais entre containers
+    # funciona como um switch virtual — isola o tráfego interno do tráfego externo
+    driver: bridge
