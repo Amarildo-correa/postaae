@@ -1,0 +1,8 @@
+# Ignora arquivos de sistema do Windows
+Thumbs.db
+
+# Ignora variáveis de ambiente sensíveis (boas práticas, mesmo sem .env agora)
+.env
+
+# Ignora dependências caso instale algo futuramente
+node_modules/
