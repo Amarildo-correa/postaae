@@ -1,0 +1,261 @@
+/* ============================================================
+   SKELETON-COMPLETO.CSS
+   responsabilidade: estado enriquecido de carregamento
+   contém: animação shimmer + todos os blocos de todas as rotas
+   carregado em segundo plano pelo script do app.js — deferred
+   quando em cache — redefine .skeleton adicionando shimmer
+   o usuário nunca percebe a troca — cascade CSS é silencioso
+   tamanho alvo: ~4kb — baixado enquanto usuário lê o feed
+   é o mesmo padrão que o Instagram usa com deferred assets —
+   enriquecer a experiência progressivamente sem bloquear nada
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   @keyframes shimmer — animação do brilho deslizante
+   simula uma varredura de luz da esquerda para a direita
+   comunica ao usuário que o sistema está trabalhando ativamente
+   timing de 1.5s — natural, não ansioso, não lento
+   o Facebook registrou essa técnica em 2013 —
+   hoje é o padrão universal de skeleton loading moderno
+   ------------------------------------------------------------ */
+@keyframes shimmer {
+    /* gradiente começa posicionado 400px à esquerda do elemento */
+    /* completamente fora da área visível — invisível no início */
+    0% {
+        background-position: -400px 0;
+    }
+
+    /* gradiente termina posicionado 400px à direita do elemento */
+    /* o browser interpola todos os frames do meio automaticamente */
+    /* efeito: brilho desliza suavemente da esquerda para a direita */
+    100% {
+        background-position: 400px 0;
+    }
+}
+
+/* ------------------------------------------------------------
+   .skeleton — redefine a classe base adicionando shimmer
+   o cascade CSS garante que essa definição sobrescreve o minimo
+   assim que este arquivo for injetado pelo script do app.js,
+   TODOS os elementos .skeleton da página ganham animação
+   sem recarregar nada, sem JavaScript adicional — puro CSS
+   ------------------------------------------------------------ */
+.skeleton {
+    /* mantém a cor base — mesma do skeleton-minimo */
+    background-color: #252725;
+
+    /* gradiente linear que cria o efeito de luz deslizante */
+    /* 90deg — horizontal, da esquerda para a direita */
+    /* três paradas simulam o reflexo de luz no centro */
+    background-image: linear-gradient(90deg, #252725 0%, /* cor base — início do gradiente */ #2f322f 50%, /* pico do brilho — levemente mais claro */ #252725 100% /* cor base — fim do gradiente */);
+
+    /* gradiente maior que qualquer elemento — 800px de largura */
+    /* permite que ele deslize completamente de fora para fora */
+    /* sem esse tamanho, o efeito cortaria nas bordas do elemento */
+    background-size: 800px 100%;
+
+    /* não repete o gradiente — uma única faixa de luz por ciclo */
+    background-repeat: no-repeat;
+
+    /* aplica a animação shimmer definida acima */
+    /* 1.5s — tempo calibrado pelo Facebook como o mais natural */
+    /* linear — velocidade constante, sem aceleração ou desaceleração */
+    /* infinite — repete até o conteúdo real substituir o skeleton */
+    animation: shimmer 1.5s linear infinite;
+
+    /* mantém configurações do minimo */
+    border-radius: var(--borda-raio-md);
+    display: block;
+}
+
+/* ============================================================
+   BLOCOS DE SKELETON POR ROTA
+   cada conjunto de classes espelha a estrutura visual real
+   o usuário reconhece o layout antes do conteúdo chegar
+   é o princípio do Reddit: estrutura familiar = percepção de velocidade
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   FEED — rota /
+   espelha o card de post do feed real
+   avatar circular + nome + título + conteúdo + ações
+   ------------------------------------------------------------ */
+
+/* container do post skeleton no feed */
+/* padding e border espelham o card real — zero layout shift */
+.skeleton-post {
+    padding: var(--espaco-lg) var(--espaco-md);
+    border-bottom: 1px solid var(--cor-divisoria);
+}
+
+/* linha do autor — avatar circular à esquerda, nome à direita */
+.skeleton-post__autor {
+    display: flex; /* posiciona avatar e nome lado a lado */
+    align-items: center; /* alinha verticalmente ao centro */
+    gap: var(--espaco-sm);
+    margin-bottom: var(--espaco-md);
+}
+
+/* avatar circular — representa a letra inicial do autor */
+/* 40px × 40px — tamanho exato do avatar real */
+/* border-radius 50% cria círculo perfeito */
+.skeleton-post__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--borda-raio-lg); /* 50% — círculo perfeito */
+    flex-shrink: 0; /* impede o flexbox de distorcer o círculo */
+}
+
+/* nome do autor — bloco retangular ao lado do avatar */
+/* largura fixa simula um nome de tamanho médio */
+.skeleton-post__nome {
+    height: 14px;
+    width: 120px;
+}
+
+/* título do post — duas linhas de altura */
+/* border-radius maior — espelha o card de título real */
+.skeleton-post__titulo {
+    height: 48px;
+    width: 100%;
+    margin-bottom: var(--espaco-sm);
+    border-radius: var(--borda-raio-md);
+}
+
+/* preview do conteúdo — três linhas de texto */
+.skeleton-post__conteudo {
+    height: 80px;
+    width: 100%;
+    margin-bottom: var(--espaco-md);
+    border-radius: var(--borda-raio-md);
+}
+
+/* linha de ações — curtir, comentar, favoritar, compartilhar */
+/* largura parcial — ações ficam agrupadas à esquerda */
+.skeleton-post__acoes {
+    height: 20px;
+    width: 200px;
+    border-radius: var(--borda-raio-sm);
+}
+
+/* ------------------------------------------------------------
+   POST INDIVIDUAL — rota /post/*
+   espelha o post aberto com título completo e conteúdo longo
+   comentários carregam em paralelo via Fetch API separada
+   ------------------------------------------------------------ */
+
+/* autor do post individual — mesmo padrão do feed */
+.skeleton-post__autor--individual {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-sm);
+    margin: var(--espaco-lg) var(--espaco-md) var(--espaco-md);
+}
+
+/* título completo — maior que o preview do feed */
+/* representa o h1 do post individual aberto */
+.skeleton-post__titulo--completo {
+    height: 64px;
+    width: 100%;
+    margin: 0 0 var(--espaco-md);
+    border-radius: var(--borda-raio-md);
+}
+
+/* conteúdo completo — muito maior que o preview do feed */
+/* representa o texto integral do post */
+.skeleton-post__conteudo--completo {
+    height: 160px;
+    width: 100%;
+    margin-bottom: var(--espaco-lg);
+    border-radius: var(--borda-raio-md);
+}
+
+/* ------------------------------------------------------------
+   COMENTÁRIOS — rota /post/*
+   carregam separadamente do post via segunda Fetch API
+   enquanto o post já está visível, comentários ainda chegam
+   é o mesmo padrão que o Reddit usa — post e comentários
+   são duas requisições independentes e paralelas
+   ------------------------------------------------------------ */
+
+/* container do comentário skeleton */
+.skeleton-comentario {
+    padding: var(--espaco-md);
+    border-bottom: 1px solid var(--cor-divisoria);
+}
+
+/* linha do autor do comentário */
+.skeleton-comentario__autor {
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-sm);
+    margin-bottom: var(--espaco-sm);
+}
+
+/* avatar menor que o do post — hierarquia visual */
+/* comentários são secundários — avatar 32px vs 40px do post */
+.skeleton-comentario__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--borda-raio-lg);
+    flex-shrink: 0;
+}
+
+/* nome do autor do comentário */
+.skeleton-comentario__nome {
+    height: 12px;
+    width: 90px;
+}
+
+/* texto do comentário — duas linhas de altura */
+.skeleton-comentario__texto {
+    height: 40px;
+    width: 100%;
+    border-radius: var(--borda-raio-md);
+}
+
+/* ------------------------------------------------------------
+   FORMULÁRIO — rotas /postar e /comentar
+   espelha os campos de input e botão de envio
+   ------------------------------------------------------------ */
+
+/* campo de input do formulário */
+.skeleton-formulario__campo {
+    height: 48px;
+    width: 100%;
+    margin-bottom: var(--espaco-md);
+    border-radius: var(--borda-raio-md);
+}
+
+/* campo de textarea — maior que input simples */
+.skeleton-formulario__textarea {
+    height: 120px;
+    width: 100%;
+    margin-bottom: var(--espaco-md);
+    border-radius: var(--borda-raio-md);
+}
+
+/* botão de envio */
+.skeleton-formulario__botao {
+    height: 44px;
+    width: 120px;
+    border-radius: var(--borda-raio-sm);
+}
+
+/* ------------------------------------------------------------
+   ACESSIBILIDADE — preferência de movimento reduzido
+   usuários com epilepsia ou sensibilidade a movimento
+   podem configurar o sistema operacional para reduzir animações
+   o browser expõe essa preferência via media query
+   o PostaAê respeita — o Twitter e o Reddit fazem o mesmo
+   o skeleton continua aparecendo — só sem o movimento
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    /* desativa o shimmer — remove gradiente e animação */
+    /* mantém o bloco sólido do skeleton-minimo como fallback */
+    /* o usuário ainda vê a estrutura — só sem o brilho */
+    .skeleton {
+        animation: none;
+        background-image: none;
+    }
+}

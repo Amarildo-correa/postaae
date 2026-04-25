@@ -1,0 +1,60 @@
+/* ============================================================
+   SKELETON-MINIMO.CSS
+   responsabilidade: primeiro paint crítico
+   filosofia: 3 retângulos genéricos que eliminam tela branca
+   tamanho alvo: ~1kb — menor payload crítico possível
+   carregado no <head> do index.html — disponível antes do app.js
+   quando skeleton-completo.css carregar via script deferred,
+   o browser redefine .skeleton automaticamente via cascade CSS
+   zero JavaScript necessário para a substituição acontecer
+   é o mesmo princípio que o Facebook usa no critical CSS —
+   entregar o mínimo visual antes de qualquer dado trafegar
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   .skeleton — classe base sem animação
+   propósito: ocupar espaço visual com cor sólida
+   quando skeleton-completo.css for injetado pelo script,
+   essa classe será redefinida adicionando shimmer via cascade
+   o browser aplica sempre a definição mais recente do mesmo seletor
+   a substituição é instantânea e invisível para o usuário
+   ------------------------------------------------------------ */
+.skeleton {
+    /* cor sólida — levemente mais clara que o fundo #181a18 */
+    /* sem gradiente, sem animação — arquivo mínimo */
+    background-color: #252725;
+
+    /* cantos arredondados — consistente com os elementos reais */
+    /* quando o conteúdo real substituir o skeleton */
+    /* não haverá salto visual de forma — mesma curvatura */
+    border-radius: var(--borda-raio-md);
+
+    /* block para ocupar largura e altura corretamente no layout */
+    display: block;
+}
+
+/* ------------------------------------------------------------
+   3 retângulos genéricos — estrutura visual mínima
+   não representam componentes específicos do PostaAê
+   representam apenas "algo está carregando aqui"
+   é o equivalente ao que o Twitter usava antes de 2016 —
+   blocos genéricos antes de adotar skeleton estruturado
+   hoje o PostaAê usa como camada de transição crítica
+   ------------------------------------------------------------ */
+
+/* retângulo pequeno — simula um título ou cabeçalho */
+/* largura parcial reforça a percepção de texto, não de bloco */
+.skeleton-topo {
+    height: 28px; /* proporcional à altura de um título */
+    width: 65%; /* parcial — parece um título, não um bloco de conteúdo */
+    margin: var(--espaco-lg) var(--espaco-md);
+}
+
+/* retângulo grande — simula um bloco de conteúdo (card de post) */
+/* reutilizado duas vezes no HTML — simula dois posts genéricos */
+/* margin lateral mantém alinhamento com o conteúdo real */
+.skeleton-bloco {
+    height: 180px; /* altura generosa — comunica que tem conteúdo vindo */
+    width: calc(100% - var(--espaco-md) * 2); /* respeita padding lateral */
+    margin: 0 var(--espaco-md) var(--espaco-md);
+}

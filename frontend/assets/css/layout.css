@@ -1,0 +1,184 @@
+/* ============================================================
+   LAYOUT.CSS — estrutura e posicionamento da página
+   responsabilidade: onde cada elemento vive na tela
+   não define cores nem tipografia — só estrutura
+   carrega em todas as rotas junto com base.css
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   #app — ponto de montagem da SPA
+   o app.js injeta todo o conteúdo aqui dentro
+   esse elemento é o container raiz de toda a interface
+   ------------------------------------------------------------ */
+#app {
+    /* largura máxima de 460px — decisão arquitetural do PostaAê */
+    /* coluna única para mobile, tablet e desktop */
+    /* o Twitter usa 600px, o PostaAê é mais compacto e focado */
+    max-width: var(--largura-conteudo);
+
+    /* centraliza horizontalmente em qualquer largura de tela */
+    /* margin auto é a técnica mais performática de centralização */
+    /* zero JavaScript, zero cálculo — o browser resolve nativamente */
+    margin: 0 auto;
+
+    /* altura mínima garante que o fundo ocupa a tela inteira */
+    /* mesmo quando o conteúdo é curto, o #181a18 preenche tudo */
+    min-height: 100vh;
+
+    /* posição relativa permite que elementos filhos usem position absolute */
+    /* o header fixo e overlays dependem dessa referência */
+    position: relative;
+}
+
+/* ------------------------------------------------------------
+   .cabecalho — barra de navegação fixa no topo
+   fixed no topo — o usuário sempre tem acesso à navegação
+   é o padrão do Instagram e Twitter — header sempre visível
+   ------------------------------------------------------------ */
+.cabecalho {
+    /* fixed remove o header do fluxo normal do documento */
+    /* ele fica fixo mesmo quando o usuário rola o feed */
+    position: fixed;
+
+    /* ocupa toda a largura disponível no topo da viewport */
+    top: 0;
+    left: 0;
+    right: 0;
+
+    /* z-index alto garante que o header fica acima de qualquer conteúdo */
+    /* o feed rola por baixo do header — nunca por cima */
+    z-index: 100;
+
+    /* background sólido — sem transparência */
+    /* conteúdo do feed passando por baixo não vaza visualmente */
+    background-color: var(--cor-fundo);
+
+    /* borda inferior sutil — separa o header do conteúdo */
+    /* usa a variável de divisória — consistência com separadores de posts */
+    border-bottom: 1px solid var(--cor-divisoria);
+}
+
+/* ------------------------------------------------------------
+   .cabecalho__interno — container interno do header
+   limita a largura do conteúdo do header a 460px */
+/* alinha com o conteúdo principal da página */
+/* ------------------------------------------------------------ */
+.cabecalho__interno {
+    /* mesma largura máxima do conteúdo principal */
+    /* logo e ícones ficam alinhados com os posts do feed */
+    max-width: var(--largura-conteudo);
+
+    /* centraliza igual ao #app */
+    margin: 0 auto;
+
+    /* flexbox distribui logo e ícones nas extremidades */
+    /* é o padrão do Twitter — logo à esquerda, ações à direita */
+    display: flex;
+
+    /* espaço máximo entre logo e ícones */
+    justify-content: space-between;
+
+    /* alinha verticalmente ao centro */
+    align-items: center;
+
+    /* padding interno do header */
+    padding: var(--espaco-md);
+}
+
+/* ------------------------------------------------------------
+   .cabecalho__logo — logotipo do PostaAê
+   ------------------------------------------------------------ */
+.cabecalho__logo {
+    /* flex para alinhar ícone e texto lado a lado */
+    display: flex;
+    align-items: center;
+    gap: var(--espaco-sm);
+
+    /* cor primária — logo sempre em destaque */
+    color: var(--cor-primaria);
+
+    /* tamanho levemente maior que o texto base */
+    font-size: var(--fonte-tamanho-grande);
+    font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   .cabecalho__acoes — ícones de ação à direita do header
+   busca, perfil e novo post
+   ------------------------------------------------------------ */
+.cabecalho__acoes {
+    /* flex para alinhar ícones lado a lado */
+    display: flex;
+    align-items: center;
+
+    /* espaçamento entre os ícones */
+    gap: var(--espaco-md);
+}
+
+/* cada ícone de ação do header */
+.cabecalho__icone {
+    /* cor padrão dos ícones inativos */
+    color: var(--cor-autor);
+
+    /* cursor pointer indica que é clicável */
+    cursor: pointer;
+
+    /* transição suave ao hover — feedback visual imediato */
+    transition: color var(--transicao-rapida);
+}
+
+/* estado hover dos ícones — feedback visual ao passar o mouse */
+.cabecalho__icone:hover {
+    color: var(--cor-primaria);
+}
+
+/* ------------------------------------------------------------
+   .conteudo-principal — área de conteúdo abaixo do header
+   padding-top compensa a altura do header fixo
+   sem isso o conteúdo ficaria escondido atrás do header
+   o Instagram e o Twitter usam exatamente essa técnica
+   ------------------------------------------------------------ */
+.conteudo-principal {
+    /* 60px é a altura do header — o conteúdo começa abaixo dele */
+    /* quando o header mudar de altura, ajusta só aqui */
+    padding-top: 60px;
+}
+
+/* ------------------------------------------------------------
+   .separador — linha divisória entre posts
+   reutilizada em feed, post individual e comentários
+   ------------------------------------------------------------ */
+.separador {
+    height: 1px;
+    background-color: var(--cor-divisoria);
+
+    /* sem margin — cada componente define seu próprio espaçamento */
+    border: none;
+}
+
+/* ------------------------------------------------------------
+   utilitários — classes de uso geral reutilizadas em toda a SPA
+   o Reddit chama de utility classes — pequenas, focadas, reutilizáveis
+   ------------------------------------------------------------ */
+
+/* esconde visualmente mas mantém acessível para leitores de tela */
+/* o Twitter usa essa técnica para textos alternativos de ícones */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* texto truncado com reticências — padrão para títulos longos no feed */
+/* o Instagram usa isso para limitar títulos de posts na listagem */
+.truncar {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

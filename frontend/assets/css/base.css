@@ -1,0 +1,229 @@
+/* ============================================================
+   BASE.CSS — reset, variáveis e tipografia
+   carrega em todas as rotas — é o DNA visual do PostaAê
+   filosofia: zero dependência externa, zero sombra, zero ruído
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   @font-face — declara a fonte Inter hospedada no próprio servidor
+   zero requisição externa — sem Google Fonts, sem latência de terceiro
+   o Nginx entrega esse arquivo junto com os demais assets estáticos
+   o Cloudflare cacheia globalmente após a primeira entrega
+   ------------------------------------------------------------ */
+@font-face {
+    font-family: "Inter";
+
+    /* woff2 é o formato mais comprimido e eficiente da web */
+    /* suportado por 97% dos browsers modernos — zero fallback necessário */
+    /* arquivo variable cobre todos os pesos — um único download de ~90kb */
+    src: url("../fonts/inter-variable.woff2") format("woff2");
+
+    /* cobre todos os pesos de 100 (thin) a 900 (black) com um único arquivo */
+    /* o Reddit usa Variable Fonts exatamente por esse motivo — um arquivo, todos os pesos */
+    font-weight: 100 900;
+
+    /* swap instrui o browser a exibir texto imediatamente com fonte fallback */
+    /* quando Inter carregar, substitui silenciosamente — zero FOIT */
+    /* FOIT = Flash of Invisible Text — texto invisível enquanto fonte carrega */
+    /* o Twitter mediu que FOIT acima de 100ms causa abandono de página */
+    font-display: swap;
+}
+
+/* ------------------------------------------------------------
+   :root — design system completo em variáveis CSS
+   todas as decisões visuais do PostaAê vivem aqui
+   quando o design mudar, muda em um lugar — reflete em tudo
+   é o mesmo princípio que o Instagram usa no seu design system
+   ------------------------------------------------------------ */
+:root {
+    /* cores — paleta minimalista dark-first */
+    --cor-fundo: #181a18; /* background de toda a página */
+    --cor-divisoria: #252725; /* bordas entre posts e seções */
+    --cor-primaria: #e8e6ec; /* títulos, links ativos, menus ativos */
+    --cor-texto: #c8c5d0; /* textos corridos e comentários */
+    --cor-timestamp: #6b6c7a; /* "há 1 hora atrás" — informação secundária */
+    --cor-autor: #a8a4b2; /* nome do autor e itens de menu inativos */
+    --cor-acento: #b09eff; /* letra inicial do autor, botões ativos */
+    --cor-acento-fundo: #2a1f3d; /* fundo da letra inicial e bordas ativas */
+
+    /* tipografia — Inter em todo o PostaAê */
+    /* system-ui é o fallback — fonte do próprio sistema operacional */
+    /* zero flash de fonte genérica sem serifa antes da Inter carregar */
+    --fonte-principal: "Inter", system-ui, sans-serif;
+
+    /* escala tipográfica em rem — relativa ao tamanho base do browser */
+    /* rem é mais acessível que px — respeita a configuração de fonte do usuário */
+    /* o Reddit usa rem por exatamente esse motivo de acessibilidade */
+    --fonte-tamanho-base: 1rem; /* 16px — base do sistema */
+    --fonte-tamanho-pequeno: 0.875rem; /* 14px — timestamps, metadados */
+    --fonte-tamanho-medio: 1rem; /* 16px — textos corridos */
+    --fonte-tamanho-grande: 1.125rem; /* 18px — títulos dos posts */
+
+    /* espaçamentos — escala consistente em toda a interface */
+    /* o Instagram usa uma escala de 8px — múltiplos de 8 criam ritmo visual */
+    --espaco-xs: 0.25rem; /* 4px  — micro espaçamentos internos */
+    --espaco-sm: 0.5rem; /* 8px  — espaçamentos pequenos */
+    --espaco-md: 1rem; /* 16px — espaçamento padrão */
+    --espaco-lg: 1.5rem; /* 24px — espaçamentos entre seções */
+    --espaco-xl: 2rem; /* 32px — espaçamentos maiores */
+
+    /* largura máxima do conteúdo — 460px em todos os dispositivos */
+    /* decisão arquitetural: coluna única para mobile, tablet e desktop */
+    /* o Twitter usa 600px, o Reddit usa 740px — o PostaAê é mais compacto */
+    /* centralizado horizontalmente via margin: 0 auto no layout.css */
+    --largura-conteudo: 460px;
+
+    /* bordas — raio de curvatura consistente */
+    --borda-raio-sm: 4px; /* botões pequenos, badges */
+    --borda-raio-md: 8px; /* cards, inputs */
+    --borda-raio-lg: 50%; /* avatar circular da letra inicial do autor */
+
+    /* transições — tempo padrão para interações */
+    /* 200ms é o limiar humano de percepção de atraso */
+    /* abaixo de 200ms parece instantâneo — acima parece lento */
+    --transicao-rapida: 200ms ease;
+}
+
+/* ------------------------------------------------------------
+   reset universal — zera comportamentos inconsistentes entre browsers
+   sem isso o PostaAê apareceria diferente no Chrome, Firefox e Safari
+   box-sizing: border-box é o reset mais importante da web moderna
+   o Facebook adotou isso em 2012 e nunca mais voltou atrás
+   ------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+    /* box-sizing: border-box faz padding e border não aumentarem o tamanho do elemento */
+    /* sem isso: width: 100px + padding: 16px = elemento de 132px — comportamento confuso */
+    /* com isso: width: 100px + padding: 16px = elemento de 100px — o padding fica dentro */
+    box-sizing: border-box;
+
+    /* zera margens padrão do browser — h1, p, ul têm margens diferentes por padrão */
+    margin: 0;
+
+    /* zera paddings padrão do browser — ul, ol, button têm paddings diferentes por padrão */
+    padding: 0;
+}
+
+/* ------------------------------------------------------------
+   html — configuração da raiz do documento
+   ------------------------------------------------------------ */
+html {
+    /* font-size: 100% respeita a configuração de fonte do usuário no browser */
+    /* se o usuário configurou fonte maior por acessibilidade, o PostaAê respeita */
+    /* nunca use font-size: 62.5% — quebra acessibilidade de forma grave */
+    font-size: 100%;
+
+    /* scroll suave para âncoras — quando app.js navegar via pushState */
+    /* o Reddit usa isso para scroll suave entre seções */
+    scroll-behavior: smooth;
+
+    /* -webkit-text-size-adjust impede o iOS de aumentar fontes automaticamente */
+    /* sem isso, fontes pequenas em mobile ficam maiores do que o CSS define */
+    -webkit-text-size-adjust: 100%;
+}
+
+/* ------------------------------------------------------------
+   body — estilos base aplicados em toda a página
+   mobile first: estilos base para telas pequenas
+   media queries expandem para telas maiores
+   ------------------------------------------------------------ */
+body {
+    /* fonte padrão de toda a aplicação — Inter com fallbacks seguros */
+    font-family: var(--fonte-principal);
+
+    /* tamanho base — todos os rem do PostaAê são relativos a esse valor */
+    font-size: var(--fonte-tamanho-base);
+
+    /* peso regular — textos corridos nunca são bold por padrão */
+    font-weight: 400;
+
+    /* line-height 1.6 — espaçamento entre linhas confortável para leitura */
+    /* o Medium usa 1.6 para artigos longos — reduz fadiga visual */
+    line-height: 1.6;
+
+    /* cor padrão do texto — todos os elementos herdam essa cor */
+    /* elementos específicos sobrescrevem com suas próprias variáveis */
+    color: var(--cor-texto);
+
+    /* background da página inteira */
+    background-color: var(--cor-fundo);
+
+    /* antialiasing suaviza as bordas da fonte em telas de alta resolução */
+    /* -webkit para Chrome e Safari, moz para Firefox */
+    /* o Instagram usa antialiasing em toda a interface */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    /* evita scroll horizontal acidental — conteúdo nunca vaza para fora da tela */
+    overflow-x: hidden;
+
+    /* altura mínima garante que o fundo ocupa a tela inteira mesmo com pouco conteúdo */
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+}
+
+/* ------------------------------------------------------------
+   tipografia — hierarquia visual dos textos
+   mobile first: tamanhos base para telas pequenas
+   ------------------------------------------------------------ */
+
+/* títulos dos posts — peso 600 para destaque sem ser agressivo */
+h1,
+h2,
+h3 {
+    color: var(--cor-primaria);
+    font-weight: 600;
+    line-height: 1.3; /* linha mais compacta para títulos — padrão do Twitter */
+}
+
+/* parágrafos — textos corridos dos posts e comentários */
+p {
+    color: var(--cor-texto);
+    line-height: 1.6;
+}
+
+/* links — comportamento padrão removido, app.js gerencia navegação via pushState */
+a {
+    color: var(--cor-primaria);
+    text-decoration: none; /* sem sublinhado — padrão do Instagram e Reddit */
+    transition: color var(--transicao-rapida); /* transição suave ao hover */
+}
+
+/* listas — usadas nos feeds e comentários */
+ul,
+ol {
+    list-style: none; /* remove marcadores — o CSS de cada componente define o estilo */
+}
+
+/* imagens — nunca ultrapassam o container */
+img {
+    max-width: 100%;
+    display: block; /* remove espaço fantasma abaixo de imagens inline */
+}
+
+/* botões — reset completo para que cada componente defina seu próprio estilo */
+button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-family: var(--fonte-principal); /* botões herdam a fonte do PostaAê */
+    font-size: var(--fonte-tamanho-base);
+    color: var(--cor-texto);
+    transition:
+        color var(--transicao-rapida),
+        background-color var(--transicao-rapida);
+}
+
+/* inputs e textareas — reset para formulários */
+input,
+textarea {
+    font-family: var(--fonte-principal);
+    font-size: var(--fonte-tamanho-base);
+    color: var(--cor-texto);
+    background-color: transparent;
+    border: none;
+    outline: none; /* o CSS do formulário define o estilo de foco */
+}

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <!-- define o conjunto de caracteres — garante acentos e caracteres especiais -->
+        <meta charset="UTF-8" />
+
+        <!-- instrui o browser a usar a largura real do dispositivo -->
+        <!-- sem isso a SPA quebraria no mobile — fonte de 90% dos bugs de layout mobile -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- título da aba — será atualizado dinamicamente pelo app.js via document.title -->
+        <!-- o Twitter e o Reddit fazem isso: "Post | Twitter", "r/brasil | Reddit" -->
+        <title>PostaAê</title>
+
+        <!-- carrega o CSS do caminho correto após a reorganização das pastas -->
+        <!-- rel="stylesheet" instrui o browser a aplicar o arquivo como folha de estilos -->
+        <!-- o browser bloqueia a renderização até o CSS carregar — garante sem flash de estilo -->
+        <!-- base.css — variáveis, reset e tipografia — crítico, sempre carrega -->
+        <link rel="stylesheet" href="assets/css/base.css" />
+
+        <!-- skeleton-minimo.css — retângulos sólidos sem animação -->
+        <!-- crítico — carrega junto com o HTML no primeiro acesso -->
+        <!-- ~1kb — custo mínimo, benefício máximo no primeiro paint -->
+        <!-- garante que o usuário nunca vê tela em branco -->
+        <link rel="stylesheet" href="assets/css/skeleton-minimo.css" />
+    </head>
+
+    <body>
+        <!-- ponto de montagem da SPA — o app.js vai injetar todo o conteúdo aqui dentro -->
+        <!-- id="app" é a convenção universal — React, Vue e Angular usam o mesmo padrão -->
+        <!-- esse div começa vazio — o conteúdo chega via Fetch API e é renderizado pelo JS -->
+        <div id="app"></div>
+
+        <!-- carrega o roteador principal como módulo ES6 -->
+        <!-- type="module" habilita import/export entre arquivos JS — sem isso os módulos quebram -->
+        <!-- defer garante que o script só executa depois do HTML estar completamente parseado -->
+        <!-- o Instagram e o Reddit carregam seus bundles com esse mesmo padrão -->
+        <script src="src/app.js" type="module" defer></script>
+    </body>
+</html>

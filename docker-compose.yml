@@ -18,7 +18,7 @@ services:
     # --watch faz o JSON Server recarregar automaticamente quando o bd.json mudar
     # --host 0.0.0.0 permite que outros containers na rede interna se conectem a ele
     # --port 3000 define a porta que o JSON Server vai escutar dentro do container
-    command: json-server --watch /data/db.json --host 0.0.0.0 --port 3000
+    command: /data/db.json --host 0.0.0.0 --port 3000
 
     # "restart: unless-stopped" reinicia o container automaticamente se ele cair
     # a única exceção é se você parar manualmente com docker-compose stop
